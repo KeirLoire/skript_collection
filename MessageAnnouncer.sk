@@ -1,0 +1,33 @@
+# Last update 09/01/2019 by KeirLoire
+options:
+    minutes: 5
+    prefix: &2&l[&a&l!&2&l]
+
+on load:
+    set {announcer::row} to 1
+    add "&2Sell your items at Auction House." to {announcer::message::*}
+    add "&2Want free Donor rank? You can buy Disciple Voucher rank at &c/ma rewards &2in pack section" to {announcer::message::*}
+    add "&2Don't forget to vote the server daily. Use &c/vote &2command." to {announcer::message::*}
+    add "&2If you want to suggest something from our server, go to http://discord.pixelforged.com" to {announcer::message::*}
+    add "&2Donate to get awesome perks! Just go to http://shop.pixelforged.com/" to {announcer::donate}
+    add "&2Unlock the Slime Fun stuff using &c/sf guide &2command to get access to machines, electricity, and some advanced tech!" to {announcer::message::*}
+    add "&2Have enchanted items lying around? Use the Tinkerer and recycle them back to XP." to {announcer::message::*}
+    add "&2Report any bugs to Discord no matter how small it is." to {announcer::message::*}
+    add "&2Remember to follow the rules so you don't get warnings or jail. See &c/rules &2." to {announcer::message::*}
+    add "&2You can declare war against another guild. Type &c/guildwar invite <guild name>" to {announcer::message::*}
+    add "&2Keep items on death is disabled except Dungeon, Shop, Spawn, and PVP Arena." to {announcer::message::*}
+    add "&2Remember not to leave your items inside an autoenchanter or disenchanter during server restarts." to {announcer::message::*}
+    add "&2Buy mob arena ticket with your vote points, just type &c/vote shop&2." to {announcer::message::*}
+    add "&2Enjoy our new feature Mob Arena and enjoy rewards with &c/ma rewards&2." to {announcer::message::*}
+    add "&2Want to create a guild with your friends? Type &c/guild &2for more information." to {announcer::message::*}
+    add "&2Avail our buy 1 take 1 promo from Overlord to Warlord rank. Just PM a staff." to {announcer::message::*}
+
+on unload:
+    clear {announcer::*}
+
+every {@minutes} minutes:
+    set {_count} to size of {announcer::message::*}
+    console command "/e broadcast {@prefix} %{announcer::message::%{announcer::row}%}%"
+    add 1 to {announcer::row}
+    if {_count} is {announcer::row}:
+        set {announcer::row} to 1
