@@ -1,0 +1,71 @@
+# Last update 09/01/2019 by KeirLoire
+options:
+    prefix: &8&l[&c&l!&8&l]
+    timeout: 10
+    mobs: false
+    quit_allowed: false
+
+on unload:
+    clear {combattag::*}
+
+on load:
+    add "tpa" to {combattag::commands::*}
+    add "home" to {combattag::commands::*}
+    add "spawn" to {combattag::commands::*}
+    add "fly" to {combattag::commands::*}
+
+on damage:
+    if attacker is player:
+        if victim is player:
+            if attacker doesn't have permission "combattag.bypass":
+                if {combattag::timeout::%attacker%} is not set:
+                    send "{@prefix} &eYou are now in combat with &c%victim%&e." to attacker
+                    console command "/fly %attacker% disable"
+                set {combattag::timeout::%attacker%} to now
+            if victim doesn't have permission "combattag.bypass":
+                if {combattag::timeout::%victim%} is not set:
+                    send "{@prefix} &eYou are now in combat with &c%attacker%&e." to victim
+                    console command "/fly %victim% disable"
+                set {combattag::timeout::%victim%} to now
+        else:
+            if {@mobs} is true:
+                if victim is monster:
+                    if attacker doesn't have permission "combattag.bypass":
+                        if {combattag::timeout::%attacker%} is not set:
+                            send "{@prefix} &eYou are now in combat." to attacker
+                            console command "/fly %attacker% disable"
+                        set {combattag::timeout::%attacker%} to now
+    else:
+        if victim is player:
+            if {@mobs} is true:
+                if victim doesn't have permission "combattag.bypass":
+                    if {combattag::timeout::%victim%} is not set:
+                        send "{@prefix} &eYou are now in combat." to attacker
+                    set {combattag::timeout::%victim%} to now
+
+on command:
+    if {combattag::timeout::%player%} is set:
+        if {combattag::commands::*} contains command:
+            send "{@prefix} &eYou can't use that command while in combat." to player
+            cancel event
+
+on join:
+    if {combattag::quitter::*} contains player:
+        kill the player
+        clear {combattag::quitter::*}
+
+on quit:
+    if {@quit_allowed} is false:
+        if {combattag::timeout::%player%} is set:
+            add player to {combattag::quitter::*}
+            clear {combattag::timeout::%player%}
+
+on death of player:
+    clear {combattag::timeout::%player%}
+        
+every 1 second:
+    loop {combattag::timeout::*}:
+        set {_timeout} to difference between {combattag::timeout::%loop-index%} and now
+        if {_timeout} > {@timeout} seconds:
+            clear {combattag::timeout::%loop-index%}
+            send "{@prefix} &eYou are no longer in combat." to loop-index parsed as player
