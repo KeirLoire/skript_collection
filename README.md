@@ -1,5 +1,5 @@
 # Skript Collection
-Requires Skript 2.3.5 or latest.
+Some of the skripts requires Skript version to be at least 2.3.5 or latest.
 
 # Naming Convention
 
